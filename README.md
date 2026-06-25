@@ -48,7 +48,7 @@ Note: The genome reference file is set to `/cvmfs/soft.mugqic/CentOS6/genomes/sp
 
 ## Quick Start
 ### Config File
-**A Config file is NECESSARY to run the pipeline** 
+**A config file is necessary to run the pipeline.** 
 You will simply need to indicate 4 pieces of information to start cooking:
 1. What directory you ran genpipes in
 2. Whether your dataset is whole exome (WES) or whole genome sequencing (WGS)
