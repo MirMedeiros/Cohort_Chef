@@ -2,8 +2,8 @@
 This pipeline takes in a joint called vcf from GenPipes v.6.1.0 and provides additional sample level and variant level quality control. A full html report is then written describing the cohort quality control.
 
 ```text
-                                           .----.
-                                          (      )
+  --------------------                     .----.
+  WELCOME TO...                           (      )
     ___      _                _           |`----'|
   / ___|___ | |__   ___  _ __| |_         || | |||         ___________________________
  | |   / _ \| '_ \ / _ \| '__| __|      .-''''''''-.      /         Alright.          \
