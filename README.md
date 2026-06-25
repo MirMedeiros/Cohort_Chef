@@ -30,6 +30,7 @@ DT
 plotly
 ```
 
+Note: The genome reference file is set to `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh38/genome/Homo_sapiens.GRCh38.fa` if this is not to your liking please find and change the path for the "hg38ref" variable in the Sample_lvl_QC.sh and Variant_lvl_QC.sh scripts to change the reference.  
 
 ## Quick Start
 ### Config File
@@ -68,6 +69,6 @@ bash MasterQC.sh Conf_file.txt
 
 A summary of the run will be written to final_report.txt, please check this file to ensure the pipeline ran with no errors.
 
-Your QCd files along with some QC summaries will be found in your indicated output direcory along with the **custom_report.html** where you will find a full explanation of your cohort QC.
+Your QCd files along with some QC summaries will be found in your indicated output directory along with the **custom_report.html** where you will find a full explanation of your cohort QC.
 
-Happy cooking!
+Happy cooking! 🍳 
