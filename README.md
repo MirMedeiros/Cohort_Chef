@@ -8,7 +8,7 @@ This pipeline takes in a joint called vcf from GenPipes v.6.1.0 and provides add
 | |   / _ \|  _ \ / _ \| '__| __|        || | |||         ___________________________
 | |__| (_) | | | | (_) | |  | |_       .-''''''''-.      /         Alright.          \
  \____\___/|_| |_|\___/|_|   \__|     /            \   <    Let's get this cohort     |
-  / ___| |__   ___ / _|               |   o ＾▽＾ o  |    \         cooking!          /
+  / ___| |__   ___ / _|              |    o ＾▽＾ o  |    \         cooking!          /
  | |   |  _ \ / _ \ |_                \            /       -------------------------
  | |___| | | |  __/  _|                '-.______.-'
   \____|_| |_|\___|_|                   /        \
@@ -44,18 +44,18 @@ DT
 plotly
 ```
 
-Note: The genome reference file is set to `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh38/genome/Homo_sapiens.GRCh38.fa` if this is not to your liking please find and change the path for the "hg38ref" variable in the Sample_lvl_QC.sh and Variant_lvl_QC.sh scripts to change the reference.  
+Note: The genome reference file is set to `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh38/genome/Homo_sapiens.GRCh38.fa` if this is not to your liking please find and change the path for the "hg38ref" variable in the `Sample_lvl_QC.sh` and `Variant_lvl_QC.sh` scripts to change the reference.  
 
 ## Quick Start
 ### Config File
+**A Config file is NECESSARY to run the pipeline** 
 You will simply need to indicate 4 pieces of information to start cooking:
 1. What directory you ran genpipes in
 2. Whether your dataset is whole exome (WES) or whole genome sequencing (WGS)
 3. Where you want your QCd data outputed
 4. The clinical recorded sex of your samples (if available). If not available you must indicate "NONE".
 
- 
-This required information must be written to a config file as follows:
+Take this example config file and modify it with your own details leaving the varibles names unchanged:
 ```text
 genpipes_dir = ~/projects/Miranda/genpipes
 WES_or_WGS = WES
@@ -75,7 +75,7 @@ Sample_3  F
 The clinical sex file is tab delimited with each row capturing a sample ID and that sample's recorded sex. Ensure that you denote female samples by "F" and male samples by "M". Also ensure your sample IDs match the sample IDs within your VCF.  
 
 ### How to run
-Simply navigate to the directory where you have downloaded the script and run the Master.sh script as follows with your Conf file as input. Chef will take care of it from there.  
+Simply navigate to the directory where you have downloaded the script and run the `Master.sh` script as follows with your Conf file as input. Chef will take care of it from there.  
 
 ```text
 bash MasterQC.sh Conf_file.txt
