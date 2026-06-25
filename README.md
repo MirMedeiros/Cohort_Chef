@@ -3,7 +3,7 @@ This pipeline takes in a joint called vcf from GenPipes v.6.1.0 and provides add
 
 ```text
   --------------------                     .----.
-  ---                                     (      )
+                                          (      )
     ___      _                _           |`----'|
   / ___|___ | |__   ___  _ __| |_         || | |||         ___________________________
  | |   / _ \|  _ \ / _ \| '__| __|      .-''''''''-.      /         Alright.          \
