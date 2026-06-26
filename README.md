@@ -44,6 +44,8 @@ DT
 plotly
 ```
 
+You can check if all these dependencies are satisfied and if any are missing by running the `Check_dependencies.sh` script from the dependencies folder. Just type `bash Check_dependencies.sh` and the modules and libraries you have and need will be listed.
+
 Note: The genome reference file is set to `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh38/genome/Homo_sapiens.GRCh38.fa` if this is not to your liking please find and change the path for the "hg38ref" variable in the `Sample_lvl_QC.sh` and `Variant_lvl_QC.sh` scripts to change the reference.  
 
 ## Quick Start
