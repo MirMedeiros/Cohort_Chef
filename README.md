@@ -37,8 +37,6 @@ export RAP_ID=<my-rap-id>
 The full list of modules available on the DRAC servers can be accessed via the module page.
 ```
 
-**JOB_MAIL and RAP_ID**
-
 Within the above bash configuration text you must replace the text in “<>” with your DRAC account specific information.
 
 **JOB_MAIL** is the environment variable that needs to be set to the email ID on which GenPipes and Cohort Chef job status notifications are sent corresponding to each job initiated by your account. It is advised that you create a separate email for jobs since you can receive hundreds of emails per pipeline. You can also de-activate the email sending in the individual Bash scripts of Cohort Chef.
