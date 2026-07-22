@@ -86,9 +86,13 @@ This will create a python environment for OpenCravat to run in and install all t
 
 Note: The genome reference file is set to either `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh38/genome/Homo_sapiens.GRCh38.fa` or `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh37/genome/Homo_sapiens.GRCh37.fa` depending on if you select "38" for GRCh38 or "37" GRCh37.
 
-## Quick Start
-### Important! Before your first time using the tool you must generate additional reference files
-Make sure that before you first run Cohort Chef you have generated all reference data. Navigate to the scripts directory and run **`bash Generate.sh`**. This will pull and QC 1000 Genomes Phase 3 reference data for GRCh38 and GRCh37 genome builds (Source:  A global reference for human genetic variation, The 1000 Genomes Project Consortium, Nature 526, 68-74 (01 October 2015) doi:10.1038/nature15393). This will also pull the ENCODE Blacklists for the GRCh38 and GRCh37 genome builds (Source: Amemiya, H.M., Kundaje, A. & Boyle, A.P. The ENCODE Blacklist: Identification of Problematic Regions of the Genome. Sci Rep 9, 9354 (2019). https://doi.org/10.1038/s41598-019-45839-z).
+## Getting Started
+### ❗️Important! Before your first time using the tool you must generate additional reference files
+Make sure that before you first run Cohort Chef you have generated all reference data. Navigate to the scripts directory and run: 
+```text
+bash Generate.sh
+``` 
+This will pull and QC 1000 Genomes Phase 3 reference data for GRCh38 and GRCh37 genome builds (Source:  A global reference for human genetic variation, The 1000 Genomes Project Consortium, Nature 526, 68-74 (01 October 2015) doi:10.1038/nature15393). This will also pull the ENCODE Blacklists for the GRCh38 and GRCh37 genome builds (Source: Amemiya, H.M., Kundaje, A. & Boyle, A.P. The ENCODE Blacklist: Identification of Problematic Regions of the Genome. Sci Rep 9, 9354 (2019). https://doi.org/10.1038/s41598-019-45839-z).
 
 ### Config File
 **A config file is necessary to run the pipeline.** 
