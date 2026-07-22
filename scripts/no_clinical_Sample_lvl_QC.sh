@@ -2,7 +2,7 @@
 #SBATCH --time=3:0:0
 #SBATCH --ntasks=1
 #SBATCH --mem=16G
-#SBATCH --account=rrg-bourqueg-ad
+#SBATCH --account=$RAP_ID
 #SBATCH --job-name=Sample_lvl_QC
 
 ################# SET UP VARIABLES #################
