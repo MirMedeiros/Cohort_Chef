@@ -82,17 +82,20 @@ bash Activate_OpenCRAVAT.sh
 ```
 This will create a python environment for OpenCravat to run in and install all the required annoations modules. The annotation modules will be placed in a new directory called `/OC_modules`. This subdirectory will be nested in the directory where you've place this github pull so ensure you have 139 GB of free space available to house this data. Please note that you will have to answer a few prompts while installing OpenCRAVAT, for these select "No" when asked *Enter 'No' or 'Opt Out' to opt out of providing an email address.* and select "y" to installing modules. Note that the installation of OpenCravat and it's dependent annotation modules will take a while to complete. After this initial installation, OpenCRAVAT (oc) commands can be run after activating the environment `source oc_env/bin/activate`.
 
-Note: The genome reference file is set to `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh38/genome/Homo_sapiens.GRCh38.fa` if this is not to your liking please find and change the path for the "hg38ref" variable in the `Sample_lvl_QC.sh` and `Variant_lvl_QC.sh` scripts to change the reference.  
+*Already have the OpenCRAVAT annotation modules installed someplace?:* Don't worry, you don't have to reinstall them again. When running `Activate_OpenCRAVAT.sh` you will be asked *"Do you already have OpenCRAVAT modules installed elsewhere and want to use them? (y/n):"*. If you select "n" for no, you will be asked to *"Enter the full path to your existing OpenCRAVAT modules directory:"* where you can indicate where the annotation modules are installed to avoid re-download. Otherwise you will install 139GB worth of data.
+
+Note: The genome reference file is set to either `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh38/genome/Homo_sapiens.GRCh38.fa` or `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh37/genome/Homo_sapiens.GRCh37.fa` depending on if you select "38" for GRCh38 or "37" GRCh37.
 
 ## Quick Start
 ### Config File
 **A config file is necessary to run the pipeline.** 
-You will simply need to indicate 5 pieces of information to start cooking:
+You will simply need to indicate 6 pieces of information to start cooking:
 1. What directory you ran genpipes in
 2. Whether your dataset is whole exome (WES) or whole genome sequencing (WGS): Pick either "WES" or "WGS"
 3. Where you want your QCd data outputed
 4. The clinical recorded sex of your samples (if available). If not available you must indicate "NONE".
 5. What OpenCravat protocol you want to run to create an SQLite to visualize the data: Pick one of "Standard" or "Cancer" or "NONE"
+6. What genome build you are using. One of two options: if using GRCh38, indicate: 38. If using GRCh37, indicate: 37. 
 
 Take this example config file and modify it with your own details leaving the varibles names unchanged:
 ```text
@@ -101,6 +104,7 @@ WES_or_WGS = WES
 output_dir = ~/projects/Miranda/chef_out
 clinical_sex_file_with_path = ~/projects/Miranda/clinical_sexes.txt
 OpenCRAVAT = Standard
+Genome_build = 38
 ```
 
 Note that you must indicate WES for exome sequencing data or WGS for genome sequencing data. The clinical_sex_file_with_path parameter is optional but highly recommended to include as providing this file means we can do a sex check of your samples. If there is no clinical sex file, please write "NONE" or leave is entry blank. 
@@ -121,7 +125,7 @@ Running the OpenCRAVAT "Cancer" protocol will annotate the VCF and generate an S
 Running OpenCRAVAT with "NONE" will not run OpenCRAVAT and will skip the generation of an SQLite file.
 
 
-### How to run
+## How to run Cohort Chef
 After you have run `Check_dependencies.sh` to ensure you have all the required modules and libraries are there, and you have run `Activate_OpenCRAVAT.sh` for the first time, you are ready to run the Cohort Chef pipeline. Simply navigate to the directory where you have downloaded the script and run the `Master.sh` script as follows with your Conf file as input. Chef will take care of it from there.  
 
 ```text
