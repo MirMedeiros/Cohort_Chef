@@ -2,7 +2,7 @@
 #SBATCH --time=6:0:0
 #SBATCH --ntasks=1
 #SBATCH --mem=16G
-#SBATCH --account=rrg-bourqueg-ad
+#SBATCH --account=$RAP_ID
 #SBATCH --job-name=PLINK_generate_refs
 
 
@@ -63,4 +63,4 @@ plink2 --pfile all_hg37 \
 # Clean up:
 rm all_hg3*.p*
 
-mv 1KG_hg37_maf_hwe_geno* ../lib
+mv 1KG_hg3*_maf_hwe_geno* ../lib
