@@ -57,3 +57,6 @@ wget -L "http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg38-huma
 #################################
 
 wget -L "https://www.encodeproject.org/files/ENCFF001TDO/@@download/ENCFF001TDO.bed.gz" -O hg37-blacklist.bed
+
+mv *blacklist.bed ../lib
+mv all_hg*.ref ../lib
