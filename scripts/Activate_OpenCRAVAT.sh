@@ -23,19 +23,42 @@ if [ ! -d "$VENV_DIR" ]; then
     pip install --upgrade pip
     pip install -r ${P_DIR}/lib/requirements.txt
     
-    # Make directory for OC modules and set it up for Cravat
-    mkdir ${P_DIR}/OC_modules
-    oc config md ${P_DIR}/OC_modules
+   
+    # GET USER INPUT FOR IF THEY WANT TO DOWNLOAD ALL MODULES OR HAVE THEM ALREADY:
+    read -p "Do you already have OpenCRAVAT modules installed elsewhere and want to use them? (y/n): " USE_EXISTING_MODULES
 
-    # Check if OpenCRAVAT modules need initializing
-    echo "Downloading baseline OpenCRAVAT modules (hg38)..."
-    oc module install-base
-    oc module install alphamissense bayesdel cadd clinvar clingen ensembl_regulatory_build esm1b gerp gnomad4 go metarnn ncbigene omim revel spliceai vest ucscgenomebrowser dbsnp excelreporter mutationtaster oncokb civic civic_gene
+    if [[ "$USE_EXISTING_MODULES" =~ ^[Yy]$ ]]; then
+         read -p "Enter the full path to your existing OpenCRAVAT modules directory: " MODULE_DIR
 
+    if [ ! -d "$MODULE_DIR" ]; then
+         echo "ERROR: Directory does not exist: $MODULE_DIR"
+         exit 1
+
+     fi
+
+     echo "Using existing modules in: $MODULE_DIR"
+     oc config md "$MODULE_DIR"
+
+
+    else
+
+        # Make directory for OC modules and set it up for Cravat
+        mkdir ${P_DIR}/OC_modules
+        oc config md ${P_DIR}/OC_modules
+
+        # Check if OpenCRAVAT modules need initializing
+        echo "Downloading baseline OpenCRAVAT modules..."
+        oc module install-base
+        oc module install alphamissense bayesdel cadd clinvar clingen ensembl_regulatory_build esm1b gerp gnomad4 go metarnn ncbigene omim revel spliceai vest ucscgenomebrowser dbsnp excelreporter mutationtaster oncokb civic civic_gene
+
+   fi
+  
     echo "Setup complete!"
+
 else
     # 2. Every subsequent run: Just activate the existing environment
-    source "$VENV_DIR/bin/activate"
+   echo "Setup was already done previously. Activating environment..."
+   source "$VENV_DIR/bin/activate"
 fi
 
 echo "========================================="
