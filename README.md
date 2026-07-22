@@ -94,7 +94,18 @@ bash Generate.sh
 ``` 
 This will pull and QC 1000 Genomes Phase 3 reference data for GRCh38 and GRCh37 genome builds (Source:  A global reference for human genetic variation, The 1000 Genomes Project Consortium, Nature 526, 68-74 (01 October 2015) doi:10.1038/nature15393). This will also pull the ENCODE Blacklists for the GRCh38 and GRCh37 genome builds (Source: Amemiya, H.M., Kundaje, A. & Boyle, A.P. The ENCODE Blacklist: Identification of Problematic Regions of the Genome. Sci Rep 9, 9354 (2019). https://doi.org/10.1038/s41598-019-45839-z).
 
-### Config File
+## How to run Cohort Chef
+After you have run `Check_dependencies.sh` to ensure you have all the required modules and libraries are there, and you have run `Activate_OpenCRAVAT.sh` for the first time, you are ready to run the Cohort Chef pipeline. Simply navigate to the directory where you have downloaded the script and run the `Master.sh` script as follows with your Conf file as input. Chef will take care of it from there.  
+
+```text
+bash MasterQC.sh Conf_file.txt
+```
+
+A summary of the run will be written to final_report.txt, please check this file to ensure the pipeline ran with no errors.
+
+Your QCd files along with some QC summaries will be found in your indicated output directory along with the **custom_report.html** where you will find a full explanation of your cohort QC.
+
+## Config File
 **A config file is necessary to run the pipeline.** 
 You will simply need to indicate 6 pieces of information to start cooking:
 1. What directory you ran genpipes in
@@ -130,18 +141,6 @@ Running the OpenCRAVAT "Standard" protocol will annotate the VCF and generate an
 Running the OpenCRAVAT "Cancer" protocol will annotate the VCF and generate an SQLite with the same annotations as "Standard" but also the following cancer specific annotations: mutationtaster oncokb civic civic_gene.
 
 Running OpenCRAVAT with "NONE" will not run OpenCRAVAT and will skip the generation of an SQLite file.
-
-
-## How to run Cohort Chef
-After you have run `Check_dependencies.sh` to ensure you have all the required modules and libraries are there, and you have run `Activate_OpenCRAVAT.sh` for the first time, you are ready to run the Cohort Chef pipeline. Simply navigate to the directory where you have downloaded the script and run the `Master.sh` script as follows with your Conf file as input. Chef will take care of it from there.  
-
-```text
-bash MasterQC.sh Conf_file.txt
-```
-
-A summary of the run will be written to final_report.txt, please check this file to ensure the pipeline ran with no errors.
-
-Your QCd files along with some QC summaries will be found in your indicated output directory along with the **custom_report.html** where you will find a full explanation of your cohort QC.
 
 ## How the pipeline works
 The Cohort Chef pipeline will QC your WES or WGS cohort joint-called VCF. This is done at the sample level and the variant level for your cohort. 
