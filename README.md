@@ -87,12 +87,22 @@ This will create a python environment for OpenCravat to run in and install all t
 Note: The genome reference file is set to either `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh38/genome/Homo_sapiens.GRCh38.fa` or `/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh37/genome/Homo_sapiens.GRCh37.fa` depending on if you select "38" for GRCh38 or "37" GRCh37.
 
 ## Getting Started
-### ❗️Important! Before your first time using the tool you must generate additional reference files
+### ❗️Important! Before your first time using the tool you must ensure the following
 Make sure that before you first run Cohort Chef you have generated all reference data. Navigate to the scripts directory and run: 
 ```text
 bash Generate.sh
 ``` 
 This will pull and QC 1000 Genomes Phase 3 reference data for GRCh38 and GRCh37 genome builds (Source:  A global reference for human genetic variation, The 1000 Genomes Project Consortium, Nature 526, 68-74 (01 October 2015) doi:10.1038/nature15393). This will also pull the ENCODE Blacklists for the GRCh38 and GRCh37 genome builds (Source: Amemiya, H.M., Kundaje, A. & Boyle, A.P. The ENCODE Blacklist: Identification of Problematic Regions of the Genome. Sci Rep 9, 9354 (2019). https://doi.org/10.1038/s41598-019-45839-z).
+
+Ensure that if you will be running OpenCravat that you have activated the tool by running:
+```text
+bash Activate_OpenCRAVAT.sh
+```
+
+Also ensure you have all the necessary modules by running:
+```text
+bash Check_dependencies.sh
+```
 
 ## How to run Cohort Chef
 After you have run `Check_dependencies.sh` to ensure you have all the required modules and libraries are there, and you have run `Activate_OpenCRAVAT.sh` for the first time, you are ready to run the Cohort Chef pipeline. Simply navigate to the directory where you have downloaded the script and run the `Master.sh` script as follows with your Conf file as input. Chef will take care of it from there.  
