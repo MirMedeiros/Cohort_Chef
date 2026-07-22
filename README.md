@@ -43,7 +43,7 @@ Within the above bash configuration text you must replace the text in “<>” w
 
 **RAP_ID** is the Resource Allocation Project ID from DRAC. It is usually in the format: rrg-lab-xy OR def-lab.
 
-**REQUIRED MODULES AND PACKAGES**
+### REQUIRED MODULES AND PACKAGES
 
 The modules loaded throughout this pipeline are as follows:
 ```text
@@ -74,7 +74,7 @@ plotly
 
 You can check if all these dependencies are satisfied and if any are missing by running the `Check_dependencies.sh` script from the dependencies folder. Just type `bash Check_dependencies.sh` and the modules and libraries you have and need will be listed. If you are missing any of the R libraries, the `Check_dependencies.sh` script will ask you if you wish to install them. Type "y" to initiate this installation.
 
-**OpenCRAVAT**
+### OpenCRAVAT
 
 If you will be running OpenCRAVAT, you will need to first install it by running the `Activate_OpenCRAVAT.sh` script once on it's own:
 ```text
