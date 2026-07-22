@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=24G
-#SBATCH --account=rrg-bourqueg-ad
+#SBATCH --account=$RAP_ID
 #SBATCH --job-name=OC_run_full
 
 
