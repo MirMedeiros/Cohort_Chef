@@ -19,7 +19,7 @@ required_modules=(
     "gatk/4.4.0.0"
     "python/3.13.2"
     "plink/2.00-20231024-avx2"
-    "r/4.5.0"
+    "mugqic/R_Bioconductor/4.3.2_3.18"
     "ngstools/1.0.1"
     "gatk/4.6.1.0"
     "vcftools/0.1.16"
@@ -55,7 +55,7 @@ fi
 echo ""
 echo "Checking R packages..."
 
-module load r/4.5.0
+module load mugqic/R_Bioconductor/4.3.2_3.18
 
 # Define the packages in a Bash array so we can reuse them for installation if needed
 R_PKGS=("ggplot2" "dplyr" "tidyr" "knitr" "DT" "plotly")
