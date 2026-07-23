@@ -36,7 +36,7 @@ cp all_hg38.ref all_hg37.ref
 # Clean up PLINK files: #
 #########################
 
-sbatch PLINK_commands_1KG.sh
+sbatch --account=$RAP_ID PLINK_commands_1KG.sh
 
 
 ########################################################
