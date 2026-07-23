@@ -131,7 +131,7 @@ if [ $R_STATUS -ne 0 ]; then
             fi
             ;;
         *)
-            echo "Installation cancelled. Please load module r/4.5.0 and install missing libraries manually."
+            echo "Installation cancelled. Please install missing libraries manually."
             exit 1
             ;;
     esac
