@@ -127,7 +127,7 @@ if [[ -z "$CLEAN_SEX" || "$clinical_sex_file_with_path" == "NONE" ]]; then
 
 
     ## RUN THIS SCRIPT WITH NO SEX INPUT
-    JOB1_OUT=$(sbatch no_clinical_Sample_lvl_QC.sh  "$genpipes_dir" "$output_dir" "$Genome_build")
+    JOB1_OUT=$(sbatch --account=$RAP_ID no_clinical_Sample_lvl_QC.sh  "$genpipes_dir" "$output_dir" "$Genome_build")
     JOB1_ID=$(echo "$JOB1_OUT" | awk '{print $4}')
 
     echo "    "
@@ -138,7 +138,7 @@ else
     # Run job 1 with sex check and  wait for it to finish before running job 2:
     ## START JOB 1: FULL SAMPLE QC
     # (We capture the submission output and use awk or cut to extract just the numeric Job ID)
-    JOB1_OUT=$(sbatch Sample_lvl_QC.sh "$genpipes_dir" "$clinical_sex_file_with_path" "$output_dir" "$Genome_build")
+    JOB1_OUT=$(sbatch --account=$RAP_ID Sample_lvl_QC.sh "$genpipes_dir" "$clinical_sex_file_with_path" "$output_dir" "$Genome_build")
     JOB1_ID=$(echo "$JOB1_OUT" | awk '{print $4}')
 
     echo "    "
@@ -149,7 +149,7 @@ fi
 
 # START JOB 2: VARIANT QC
 # (We tell Slurm to hold this job until Job 1 finishes successfully using afterok)
-JOB2_OUT=$(sbatch --dependency=afterok:$JOB1_ID Variant_lvl_QC.sh "$genpipes_dir" "$DP" "$output_dir" "$Genome_build")
+JOB2_OUT=$(sbatch --dependency=afterok:$JOB1_ID --account=$RAP_ID Variant_lvl_QC.sh "$genpipes_dir" "$DP" "$output_dir" "$Genome_build")
 JOB2_ID=$(echo "$JOB2_OUT" | awk '{print $4}')
 
 echo "    "
@@ -168,7 +168,7 @@ sed -i "s,<OUT_PATH>,${output_dir},g" custom_report.Rmd
 
 # knit report:
 module load mugqic/R_Bioconductor/4.3.2_3.18
-JOB3_OUT=$(sbatch --dependency=afterok:$JOB2_ID Knit_it.sh "$output_dir")
+JOB3_OUT=$(sbatch --dependency=afterok:$JOB2_ID --account=$RAP_ID Knit_it.sh "$output_dir")
 
 JOB3_ID=$(echo "$JOB3_OUT" | awk '{print $4}')
 
@@ -178,7 +178,7 @@ echo "Submitted HTML Report Knit (Job ID: $JOB3_ID) - Waiting for Job $JOB2_ID t
 
 # OPENCRAVAT. Conditional logic for if we're going to run OpenCRAVAT
 if [ "$OpenCRAVAT" = "Standard" ]; then
-    JOB4_OUT=$(sbatch --dependency=afterok:$JOB3_ID Standard_CRAVAT_run.sh "$output_dir" "$Genome_build")
+    JOB4_OUT=$(sbatch --dependency=afterok:$JOB3_ID --account=$RAP_ID Standard_CRAVAT_run.sh "$output_dir" "$Genome_build")
     JOB4_ID=$(echo "$JOB4_OUT" | awk '{print $4}')
 
     echo " "
@@ -187,7 +187,7 @@ if [ "$OpenCRAVAT" = "Standard" ]; then
     echo "--------------------------------------------------------------------------------------------------------------------------------------------"
     echo " "
 
-    JOB5_OUT=$(sbatch --dependency=afterany:$JOB4_ID \
+    JOB5_OUT=$(sbatch --dependency=afterany:$JOB4_ID --account=$RAP_ID \
        --job-name="pipeline_reporter" \
        --output="${output_dir}/final_report.txt" \
        --time=00:02:00 \
@@ -210,10 +210,10 @@ if [ "$OpenCRAVAT" = "Standard" ]; then
     echo " "
 
     ## CLEAN UP:
-    sbatch --dependency=afterany:$JOB5_ID clean_up.sh "$output_dir"
+    sbatch --dependency=afterany:$JOB5_ID --account=$RAP_ID clean_up.sh "$output_dir"
 
 elif [ "$OpenCRAVAT" = "Cancer"  ]; then
-    JOB4_OUT=$(sbatch --dependency=afterok:$JOB3_ID Cancer_CRAVAT_run.sh "$output_dir" "$Genome_build")
+    JOB4_OUT=$(sbatch --dependency=afterok:$JOB3_ID --account=$RAP_ID Cancer_CRAVAT_run.sh "$output_dir" "$Genome_build")
     JOB4_ID=$(echo "$JOB4_OUT" | awk '{print $4}')
     
     echo " "
@@ -223,7 +223,7 @@ elif [ "$OpenCRAVAT" = "Cancer"  ]; then
     echo " "
 
     ### Create a report file:
-    JOB5_OUT=$(sbatch --dependency=afterany:$JOB4_ID \
+    JOB5_OUT=$(sbatch --dependency=afterany:$JOB4_ID --account=$RAP_ID \
        --job-name="pipeline_reporter" \
        --output="${output_dir}/final_report.txt" \
        --time=00:02:00 \
@@ -246,7 +246,7 @@ elif [ "$OpenCRAVAT" = "Cancer"  ]; then
     echo " "
 
     ## CLEAN UP:
-   sbatch --dependency=afterany:$JOB5_ID clean_up.sh "$output_dir"
+   sbatch --dependency=afterany:$JOB5_ID --account=$RAP_ID clean_up.sh "$output_dir"
 
 
 else
@@ -254,7 +254,7 @@ else
     echo "No OpenCRAVAT Protocol Selected. OpenCRAVAT will not run."
     echo " "
    ### Create a report file:
-   JOB4_OUT=$(sbatch --dependency=afterany:$JOB3_ID \
+   JOB4_OUT=$(sbatch --dependency=afterany:$JOB3_ID --account=$RAP_ID \
        --job-name="pipeline_reporter" \
        --output="${output_dir}/final_report.txt" \
        --time=00:02:00 \
@@ -275,7 +275,7 @@ else
     echo " "
 
     ## CLEAN UP:
-    sbatch --dependency=afterany:$JOB4_ID clean_up.sh "$output_dir"
+    sbatch --dependency=afterany:$JOB4_ID --account=$RAP_ID clean_up.sh "$output_dir"
 fi
 
 
