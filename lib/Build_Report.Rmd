@@ -1,0 +1,374 @@
+---
+title: 
+output: 
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+---
+
+```{r header picture, echo = FALSE}
+knitr::include_graphics("<OUT_PATH>/report_header.png")
+```
+
+# Your Returned Files Explained
+```{r file diagram, echo = FALSE}
+knitr::include_graphics("<OUT_PATH>/Seq_pipeline_diagram.png")
+```
+
+**VCF files explained:**
+
+• In the **VCF samples directory**: here you will find your individual VCFs, there is one for each sample. Each file is named after their corresponding sample ID.
+
+• The **allSamples.hc.vqsr.vt.mil.snpId.snpeff.dbnsfp.vcf.gz** file: this file is the joint called VCF output of GenPipes (DNASeq). No samples nor variants are removed, variants that VQSR has deemed problematic are flagged but not removed.
+
+• The **FullCohort_FullQC.vcf.gz** file: this file retains all samples but removes any variant which fails at any variant QC step. The variant count after each QC step is listed in the tables below and as well as an elaboration on the QC steps taken.
+
+• The **BestSamples_FullQC.vcf.gz** file: this file removes any problematic samples and removes any variant which fails at any variant QC step. The surviving sample and variant counts of each step are listed in the tables below and as well as an elaboration on the QC steps taken.
+
+**Additional files:**
+
+• MultiQC (from GenPipes): **DnaSeq.germline_snv.multiqc.html**
+
+• FullCohort_FullQC.vcf.gz variant summary: **annotated_full_cohort.vcf_summary.html**
+
+• BestSamples_FullQC.vcf.gz variant summary: **annotated_best_samples.vcf_summary.html**
+
+# Sample Level Quality Control
+
+### Explanation of sample QC Steps
+Many QC parameters at the sample level were already obtained via GenPipes. These included Chimeric Reads, Contamination, Mean Depth, and Call Rate. The Mean Genotype Quality (GQ) was computed at the sample level for all samples in the cohort using BCFtools. Relatedness was calculated using the KING implementation in PLINK. Ancestry and sample cohort prinical
+components (PCs) were calculated in PLINK. Sex imputation and check was done with PLINK.
+
+**Chimeric Reads:** Chimeric reads are sequencing reads which align to two different regions of the genome. When there is a high proportion of these in sequencing data they often indicate a technical artifact.
+
+**Contamination:** Contamination is the accidental inclusion of foreign non-sample DNA which was sequenced. This contamination may be of non human origin such as DNA from microbes, or may originate from another human sample. Excess contamination compromises the sample.
+
+**Mean Depth:** Any sample which has excessively low depth compared to the rest of the cohort is removed.
+
+**Call Rate:** Any sample which has an excessively low call rate compared to the rest of the cohort is removed.
+
+**Mean Genotype Quality:** Any sample which has excessively low quality compared to the rest of the cohort is removed.
+
+**Relatedness:** Unless the samples are from a family study, related samples should not be included in genetic cohort studies. One reason for this is that including related samples contributes to a double-dipping bias in which certain alleles are over-represented since they are shared between family members. Including related individuals may increase the presence of false positive associations (Type I errors) in the study. We recommend excluding any sample which is related to another by a second degree or closer.
+
+**Ancestry:** To avoid population stratification, which can lead to erroneous associations, it is best to ensure your sample population is somewhat homogeneous. Different genetic ancestries can carry difference ancestry specific allele frequencies and linkage disequilibrium differences which may skew findings. For these regions, it is best to ensure the samples of your cohort cluster together as a similar ancestral group. Please remove any samples which do not appear to share the same ancestry as the majority of the population as they will introduce more bias into your analysis.
+
+## Sample QC: Table Overview
+Quality control steps commenced at the sample level following the generation of a joint called multi-sample VCF for the cohort.
+
+The starting VCF was the output of GenPipes: allSamples.hc.vqsr.vt.mil.snpId.snpeff.dbnsfp.vcf.gz
+
+The sample level quality control steps taken, their respective cut-offs, and the number of samples surviving each step are shown below:
+```{r qc-table, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(DT)
+
+# 1. Read in your CSV formatted text file
+# Note: If your file uses Tabs instead of Commas, change sep = "," to sep = "\t"
+qc_data <- read.csv("<OUT_PATH>/Sample_QC_Passing_by_Step.txt", sep = ",", header = TRUE)
+colnames(qc_data) <- c("QC Step",  "Cut off to Survive", "Number of Remaining Samples")
+
+# 2. Render it as a clean, interactive data table
+datatable(
+  qc_data,
+  rownames = FALSE,
+  options = list(
+    pageLength = 10,       # Shows 10 samples per page
+    autoWidth = TRUE,      # Automatically scales column sizes
+    dom = 'Bfrtip',        # Defines layout structure (Buttons, filter, processing, table, information, pagination)
+    buttons = c('copy', 'csv', 'excel') # Lets viewers download the clean table data
+  ),
+  class = 'cell-border strip over', # Applies nice, crisp styling gridlines
+  caption = "Table 1: Quality Control Passing Sample Overview"
+)
+```
+
+
+The exact sample QC metrics are provided in detail below:
+```{r qc-table-full, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(DT)
+
+# 1. Read in your CSV formatted text file
+# Note: If your file uses Tabs instead of Commas, change sep = "," to sep = "\t"
+qc_data <- read.table("<OUT_PATH>/Sample_QC_metrics.txt", header = TRUE)
+
+# 2. Render it as a clean, interactive data table
+datatable(
+  qc_data,
+  rownames = FALSE,
+  filter = 'top',          # Adds drop-down/text filters to the top of every column
+  extensions = 'Buttons',  # Optional: Adds data export buttons
+  options = list(
+    pageLength = 25,       # Shows 10 samples per page
+    autoWidth = TRUE,      # Automatically scales column sizes
+    dom = 'Bfrtip',        # Defines layout structure (Buttons, filter, processing, table, information, pagination)
+    buttons = c('copy', 'csv', 'excel') # Lets viewers download the clean table data
+  ),
+  class = 'cell-border strip over', # Applies nice, crisp styling gridlines
+  caption = "Table 2: Quality Control Metrics by Step"
+)
+```
+
+
+## PCA: Ancestry Analysis
+Below is the PCA plot showcasing the variance across the first and
+second genetic principal components of our cohort samples and the 1000
+Genomes GRCh38 reference cohort. Our samples are indicated in black, the
+reference samples are colored by sample ancestry. The separation and
+unique clustering indicates distinct grouping from which different
+ancestries may be inferred. Please make sure your samples cluster with
+the ancestry group you expect. Lesser studied ancestral groups may not
+cluster cleanly.
+
+These figures below are fully interactive: you can **hover** over any
+point to see its specific Sample ID, **zoom in** on specific clusters,
+or **double-click** the legend to isolate populations. You may also
+export the image as you wish.
+
+```{r setup, include=FALSE}
+# This chunk sets up your environment but won't show up in the final report
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+
+```{r plot ancestry, echo=FALSE}
+# Load required libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(plotly)
+
+# Plot Ancestry:
+# get files:
+all_hg38 <- read.table("/home/medeiros/links/projects/rrg-bourqueg-ad/C3G/projects/Miranda_Summer/post_genpipes_workflow/clean/ref/all_hg38.ref" , header=TRUE)
+
+eigenvals <- read.table("<OUT_PATH>/PCA_ancestry.eigenval", header = FALSE)
+colnames(eigenvals)[1] <- "eigenvalues"
+eigenvals$PC <- 1:nrow(eigenvals)
+
+eigenvec <- read.table("<OUT_PATH>/PCA_ancestry.eigenvec", header = FALSE)
+colnames(eigenvec) <- c("FID", "IID", paste0("PC", seq_len(ncol(eigenvec) - 2)))
+
+# sample only:
+sample_eigenvals <- read.table("<OUT_PATH>/sample.eigenval", header = FALSE)
+colnames(sample_eigenvals)[1] <- "eigenvalues"
+sample_eigenvals$PC <- 1:nrow(sample_eigenvals)
+
+sample_eigenvec <- read.table("<OUT_PATH>/sample.eigenvec", header = FALSE)
+colnames(sample_eigenvec) <- c("FID", "IID", paste0("PC", seq_len(ncol(sample_eigenvec) - 2)))
+
+#################
+
+# Plot Ancestry:
+# identify reference ancestries from psam file:
+colnames(all_hg38)[1] <- "IID"
+
+# select supergroup:
+sup <- select(all_hg38, IID, SuperPop)
+
+merged <- merge(eigenvec, sup, by="IID", all = TRUE) %>% select(IID, PC1, PC2, SuperPop)
+
+# label samples seperately from the rest in superpop
+merged <- merged %>% 
+  mutate(SuperPop = replace_na(SuperPop, "Sample"))
+
+# put samples at the end of the dataframe list:
+merged <- merged %>%
+  arrange(SuperPop == "Sample")
+
+
+## Plot by layer:
+ref = filter(merged, SuperPop != "Sample")
+samples = filter(merged, SuperPop == "Sample")
+
+p <- ggplot() +
+  # Layer 1: Everything EXCEPT "Sample"
+  geom_point(data = ref, mapping = aes(x = PC1, y = PC2, color = SuperPop, text = paste0("<b>IID:</b> ", IID, "<br>",
+                                         "<b>Ancestry:</b> ", SuperPop)), 
+             alpha = 0.4) + 
+  # Layer 2: Only "Sample" (plotted on top)
+  geom_point(data = samples, mapping = aes(x = PC1, y = PC2, text = paste0("<b>👤 Target Sample</b><br><b>IID:</b> ", IID)), 
+             color = "black", size = 3, shape = 18) +
+  
+  # Styling and axis text
+  labs(title = "Principal Component Analysis (PCA) Population Overlay",
+       x = "Principal Component 1 (PC1)",
+       y = "Principal Component 2 (PC2)",
+       color = "Reference Ancestry") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold", margin = margin(b = 15)))
+
+# 2. Render via Plotly, parsing only the formatted text string on hover
+interactive_plot <- ggplotly(p, tooltip = "text")
+
+interactive_plot
+```
+
+
+## PCA: Sample Cohort Analysis
+When looking at the first and second genetic prinical components of the sample cohort alone, all samples
+should cluster closely together if they are genetically similar. Any potential outliers across the first or second
+principal components will deviate from the rest. Please consider these samples in your data interpretation and
+consider removing them (they have not been removed for you).
+
+These figures below are fully interactive: you can **hover** over any
+point to see its specific Sample ID. You may also
+export the image as you wish.
+
+
+```{r plot samples, echo=FALSE}
+# PLot samples only:
+p <- ggplot() +
+  # Layer 2: Only "Sample" (plotted on top)
+  geom_point(data = sample_eigenvec, mapping = aes(x = PC1, y = PC2, text = paste0("<b>👤 Target Sample</b><br><b>IID:</b> ", IID)), 
+             color = "black", size = 3, shape = 18) +
+  
+  # Styling and axis text
+  labs(title = "Principal Component Analysis (PCA) Population Overlay",
+       x = "Principal Component 1 (PC1)",
+       y = "Principal Component 2 (PC2)") +
+  theme_minimal(base_size = 12) +
+  theme(plot.title = element_text(face = "bold", margin = margin(b = 15)))
+
+# 2. Render via Plotly, parsing only the formatted text string on hover
+interactive_plot <- ggplotly(p, tooltip = "text")
+
+interactive_plot
+```
+
+### PCA Sample Scree Plot 
+The scree plot is a line plot in which the eigenvalues from the sample PCA are plotted against their respective PC number. This plot will help to determine the number of genetic PCs which should be retained for downstream analysis. Once the eigenvalues begin to plateau, each subsequent PC adds little explanatory power and thus becomes unnecessary for downstream models. Please take a look at the below plot to determine the number of PCs to retain for potential downstream analysis. Once you have determined the number of PCs for your potential downstream analyses, the sample PC eigenvectors can be found in this file: *sample.eigenvec*    
+
+```{r plot scree, echo=FALSE}
+# SET UP:
+sample_eigens <- read.table("<OUT_PATH>/sample.eigenval", header = FALSE)
+colnames(sample_eigens)[1] <- "eigenvalues"
+sample_eigens$PC <- 1:nrow(sample_eigens)
+
+# plot:
+ggplot(sample_eigens, aes(x = PC, y = eigenvalues)) +
+  geom_line(color = "steelblue") +
+  geom_point(size = 3, color = "darkblue") +
+  # This ensures the X-axis shows whole numbers for each PC
+  scale_x_continuous(breaks = 1:nrow(sample_eigens)) + 
+  labs(title = "Scree Plot",
+       subtitle = "For downstream analysis: retain only the number of PCs up until the eigenvalues begin to plateau",
+       x = "Principal Component",
+       y = "Eigenvalue") +
+  theme_minimal()
+```
+
+
+## Sample QC: Metric Distribution
+The distribution of the sample level quality control parameters of chimeric reads, contamination, average depth, average missingness, and average quality is as follows:
+
+```{r, echo = FALSE}
+knitr::include_graphics("<OUT_PATH>/qc_metrics_plot.png")
+```
+
+
+## Sample Check Sex
+If you had a clinical sex file for your samples, we compared those recorded sexes to each sample's genetically informed sex. If there was a disagreement between a sample's recorded sex and their genetically informed sex and they did not match, they are recorded here. **Be careful of these samples!! Since their genetic sex does not match their recorded sex, they MAY NOT be the samples you think you sequenced**
+```{r sex-check, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(DT)
+
+# 1. Read in your CSV formatted text file
+# Note: If your file uses Tabs instead of Commas, change sep = "," to sep = "\t"
+sex_data <- read.csv("<OUT_PATH>/discordant_sex.txt", sep = ",", header = FALSE)
+colnames(sex_data)[1] <- "Samples with disconcordant sex"
+
+# 2. Render it as a clean, interactive data table
+datatable(
+  sex_data,
+  rownames = FALSE,
+  options = list(
+    pageLength = 10,       # Shows 10 samples per page
+    autoWidth = TRUE,      # Automatically scales column sizes
+    dom = 'Bfrtip',        # Defines layout structure (Buttons, filter, processing, table, information, pagination)
+    buttons = c('copy', 'csv', 'excel') # Lets viewers download the clean table data
+  ),
+  class = 'cell-border strip over', # Applies nice, crisp styling gridlines
+  caption = "Table 3: Samples with discordant sex"
+)
+```
+
+# Variant Level Quality Control
+Variant level quality control directly follows sample level quality control for the **BestSamples_FullQC.vcf.gz** file. Conversely, for the **FullCohort_FullQC.vcf.gz** file, no samples are removed and variant quality control is done directly on the **allSamples.hc.vqsr.vt.mil.snpId.snpeff.dbnsfp.vcf.gz** file. For both files, at the variant level, quality control can be summarized as per the following tables:
+
+### Explanation of Variant QC Steps
+The exact variant quality control steps explained for each QC step in more detail are provided
+below:
+
+**1. VQSR flagged variants and variants overlapping with the ENCODE Blacklist are removed.** Variant Quality Score Recalibration (VQSR) is a score from GATK which identifies probable artifacts across the VCF callset. These are simply flagged in the GenPipes VCF output but we remove this in the rigorous QC steps as these variants are likely problematic.
+Any variants which overlap with problematic regions of the genome recorded in the ENCODE Blacklist are removed from the VCF. The ENCODE Blacklist is a comprehensive list of anomalous, unstructured, and otherwise untrustworthy genomic regions.
+
+**2. Variants with quality (GQ) below 20 are removed.** A quality cut-off of 20 is a typical threshold for sequencing data. We apply this standard threshold here where any variant below this threshold is removed.
+
+**3. Variants with depth (DP) below 20 are removed.** A depth cut-off of 20 is a typical and forgiving threshold for WES data. We apply this standard threshold here where any variant below this threshold is removed. 
+
+**4. Variants which are missing across more than 5% of samples in the cohort are removed.** This step is done to ensure that the variants which we are looking at are indeed reasonably recorded across the majority of samples within the cohort. It is important to not just have good quality variants but also to make sure these variants are consistently present across 95% of samples.
+
+**5. Hardy-Weinberg Equilibrium (HWE) filtering.** Variants which significantly deviate away from expected HWE genotype frequencies (our selected p-value cut-off =1x10e5) represent genotyping errors and artifacts. These significant variants are removed from the VCF.
+
+**6. Allele Balance (AB) heterozygous variant filtering.** Variant genotypes are called as homozygous or heterozygous based on the allelic balance of reads. In theory a homozygous call should be supported by 100% of reads (either all reference or all alternative), whereas a heterozygous call should have 50% of reads be of the reference allele and the other 50% be the alternative allele. In practice these numbers are not as clear cut, so we define a minimum allele balance threshold of 0.2 for heterozygous reads. This means that any heterozygous call where one of the two alleles has fewer than 20% of reads is deemed an ambiguous call and removed from the dataset.
+
+### Variant QC - Post Sample QC
+Poor quality samples have been removed prior to variant QC here. This is the breakdown of the BestSamples_FullQC.vcf.gz file throughout variant QC by chromosome:
+```{r var-qc-table-best, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(DT)
+
+# 1. Read in your CSV formatted text file
+# Note: If your file uses Tabs instead of Commas, change sep = "," to sep = "\t"
+qc_data <- read.csv("<OUT_PATH>/variant_counts_next.csv", header = TRUE)
+colnames(qc_data) <- c("CHROM", "Blacklist & VQSR", "GQ > 20", "DP > 20", "Missingness < 5%", "HWE Passed", "Allele Balance")
+
+# 2. Render it as a clean, interactive data table
+datatable(
+  qc_data,
+  rownames = FALSE,
+  filter = 'top',          # Adds drop-down/text filters to the top of every column
+  extensions = 'Buttons',  # Optional: Adds data export buttons
+  options = list(
+    pageLength = 100,       # Shows 10 samples per page
+    autoWidth = TRUE,      # Automatically scales column sizes
+    dom = 'Bfrtip',        # Defines layout structure (Buttons, filter, processing, table, information, pagination)
+    buttons = c('copy', 'csv', 'excel') # Lets viewers download the clean table data
+  ),
+  class = 'cell-border strip over', # Applies nice, crisp styling gridlines
+  caption = "Table 4: Variants Surviving by Quality Control Step After Poor Samples Removed"
+)
+```
+
+
+### Variant QC - No Samples Removed:
+All samples have been retained prior to variant QC here. This is the breakdown of the FullCohort_FullQC.vcf.gz file throughout variant QC by chromosome:
+```{r var-qc-table-full, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(DT)
+
+# 1. Read in your CSV formatted text file
+# Note: If your file uses Tabs instead of Commas, change sep = "," to sep = "\t"
+qc_data <- read.csv("<OUT_PATH>/variant_counts_noSamplesRemoved.csv", header = TRUE)
+colnames(qc_data) <- c("CHROM", "Blacklist & VQSR", "GQ > 20", "DP > 20", "Missingness < 5%", "HWE Passed", "Allele Balance")
+
+
+# 2. Render it as a clean, interactive data table
+datatable(
+  qc_data,
+  rownames = FALSE,
+  filter = 'top',          # Adds drop-down/text filters to the top of every column
+  extensions = 'Buttons',  # Optional: Adds data export buttons
+  options = list(
+    pageLength = 100,       # Shows 10 samples per page
+    autoWidth = TRUE,      # Automatically scales column sizes
+    dom = 'Bfrtip',        # Defines layout structure (Buttons, filter, processing, table, information, pagination)
+    buttons = c('copy', 'csv', 'excel') # Lets viewers download the clean table data
+  ),
+  class = 'cell-border strip over', # Applies nice, crisp styling gridlines
+  caption = "Table 5: Variants Surviving by Quality Control Step - No Samples Removed"
+)
+```
