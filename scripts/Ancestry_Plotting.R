@@ -20,7 +20,9 @@ colnames(eigenvals)[1] <- "eigenvalues"
 eigenvals$PC <- 1:nrow(eigenvals)
 
 eigenvec <- read.table(paste0(dir,"/Sample_QC/PCA_ancestry.eigenvec"), header = FALSE)
-colnames(eigenvec) <- c("FID", "IID", "PC1", "PC2")
+prefix_names <- c("FID", "IID")
+num_pcs <- ncol(eigenvec) - length(prefix_names)
+colnames(eigenvec) <- c(prefix_names, paste0("PC", seq_len(num_pcs)))
 
 # sample only:
 sample_eigenvals <- read.table(paste0(dir,"/Sample_QC/sample.eigenval"), header = FALSE)
@@ -28,7 +30,8 @@ colnames(sample_eigenvals)[1] <- "eigenvalues"
 sample_eigenvals$PC <- 1:nrow(sample_eigenvals)
 
 sample_eigenvec <- read.table(paste0(dir,"/Sample_QC/sample.eigenvec"), header = FALSE)
-colnames(sample_eigenvec) <- c("FID", "IID", "PC1", "PC2")
+num_pcs <- ncol(sample_eigenvec) - length(prefix_names)
+colnames(sample_eigenvec) <- c(prefix_names, paste0("PC", seq_len(num_pcs)))
 
 ################ Sample Plotting ################
 
