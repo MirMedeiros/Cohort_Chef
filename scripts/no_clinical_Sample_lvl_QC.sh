@@ -292,7 +292,6 @@ cat temp sqc.txt | awk '!x[$0]++' > Sample_QC_Passing_by_Step.txt
 echo "Sex Check Not Done - No Clinical Sex File Supplied" > discordant_sex.txt 
 
 
-rm ${genpipes_dir}/all_hg${genome_build}.ref
 
 #### Move files to the output directory:
 cp Ancestry_PCA_plot.png ${output_dir}
