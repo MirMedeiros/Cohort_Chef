@@ -18,11 +18,15 @@ module load StdEnv/2023 plink/2.00-20231024-avx2
 plink2 --zst-decompress all_hg38.pgen.zst all_hg38.pgen
 plink2 --zst-decompress all_hg38.pvar.zst all_hg38.pvar
 
+# ensure same samples are in both references:
+awk '!/^#/ {print "0", $1}' all_hg37.psam > samples.txt
+
 # Clean and convert to plink binary files:
 plink2 --pfile all_hg38 \
 --memory 55000 \
 --max-alleles 2 \
 --allow-extra-chr \
+--keep samples.txt \
 --chr 1-22 \
 --maf 0.05 \
 --hwe 0.000001 midp \
