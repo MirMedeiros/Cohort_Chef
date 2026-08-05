@@ -268,7 +268,7 @@ echo "Unrelated Samples:" $penultimate " samples" >> Sample_QC_Passing_by_Step.t
   
 cp penultimate_passing_samples.txt Final_list_of_passing_samples.txt
 
-# list of samples which pass QC: /project/6007512/shared/C3G/projects/Miranda_Summer/test_pipeline/post_gvcf_pipeline/Samples_passing_QC.list
+# list of samples which pass QC: Samples_passing_QC.list
 sed '1d' Final_list_of_passing_samples.txt > passing_samples.txt
 
 # filter:
