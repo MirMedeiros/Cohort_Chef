@@ -142,7 +142,7 @@ library(plotly)
 
 # Plot Ancestry:
 # get files:
-all_hg38 <- read.table("/home/medeiros/links/projects/rrg-bourqueg-ad/C3G/projects/Miranda_Summer/post_genpipes_workflow/clean/ref/all_hg38.ref" , header=TRUE)
+all_hg38 <- read.table("<OUT_PATH>/all_hg.ref" , header=TRUE)
 
 eigenvals <- read.table("<OUT_PATH>/PCA_ancestry.eigenval", header = FALSE)
 colnames(eigenvals)[1] <- "eigenvalues"
