@@ -8,13 +8,15 @@
 ################# SET UP VARIABLES #################
 
 genpipes_dir=$1
+output_dir=$3
 genome_build=$4
 genome_ref=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh${genome_build}/genome/Homo_sapiens.GRCh${genome_build}.fa
 VCF=${genpipes_dir}/Sample_QC/Post_Sample_QC_Post_VQSR.vcf.gz
-cp ../lib/hg${genome_build}-blacklist.bed ${genpipes_dir}
-BL=${genpipes_dir}/hg${genome_build}-blacklist.v2.bed 
+P_DIR=$(echo "$PWD" | sed 's|/[^/]*$||')
+cp ${P_DIR}/lib/hg${genome_build}-blacklist.bed ${genpipes_dir}
+BL=${genpipes_dir}/hg${genome_build}-blacklist.bed 
 OUTNAME=varQC_Post_sampleQC
-output_dir=$3
+
 
 # make outdir and navigate to it:
 mkdir ${genpipes_dir}/Sample_QC/Variant_QC
