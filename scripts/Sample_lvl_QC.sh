@@ -11,12 +11,13 @@ genpipes_dir=$1
 genome_build=$4
 genome_ref=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh${genome_build}/genome/Homo_sapiens.GRCh${genome_build}.fa
 jointcalled_vcf=${genpipes_dir}/variants/allSamples.hc.vqsr.vt.mil.snpId.snpeff.dbnsfp.vcf.gz
-ref1KGPLINK=../lib/1KG_hg${genome_build}/_maf_hwe_geno
 clinical_sexes=$2
 output_dir=$3
 P_DIR=$(echo "$PWD" | sed 's|/[^/]*$||')
-cp ${P_DIR}/lib/all_hg${genome_build}.ref ${genpipes_dir}
 script_dir=$PWD
+cp ${P_DIR}/lib/all_hg${genome_build}.ref ${genpipes_dir}
+ref1KGPLINK=${P_DIR}/lib/1KG_hg${genome_build}_maf_hwe_geno
+
 
 # make outdir and navigate to it:
 mkdir ${genpipes_dir}/Sample_QC
@@ -129,8 +130,13 @@ rm VCF_PLINK*
 rm missingSNPID.txt
 rm VarsRenamed*
 
+
+# Setup Fail Safe for if cohort is smaller than 30 samples to still run LD pruning:
+# This will proceed with a sloppy higher noise pruning of the smaller cohort but be adaquet enough to look for general large differences between samples
+SMALL_LD_FLAG=$( [ $(wc -l < Clean_VarsRenamed.fam) -lt 30 ] && echo "--bad-ld" )
+
 plink2 --bfile Clean_VarsRenamed \
---indep-pairwise 50 5 0.5 \
+--indep-pairwise 50 5 0.5 ${SMALL_LD_FLAG} \
 --memory 55000 \
 --out Clean_VarsRenamed_pruning
 
@@ -194,6 +200,8 @@ plink2 --bfile ${ref1KGPLINK} \
 
 
 # merge and QC together:
+module load StdEnv/2020 plink/1.9b_6.21-x86_64
+
 plink \
 --bfile overlapping_SNPs_samples  \
 --bmerge overlapping_SNPs_ref \
@@ -207,6 +215,8 @@ rm sample_SNPs.txt
 rm ref_SNPs.txt
 
 # Prune Merged file:
+module load StdEnv/2023 plink/2.00-20231024-avx2
+
 plink2 --bfile merged_samples_ref \
 --indep-pairwise 50 5 0.5 \
 --memory 55000 \
@@ -232,7 +242,6 @@ echo "Ancestry PCA Calculated" SampleQC_progress.txt >> SampleQC_progress.txt
 
 
 ##########################################################
-module unload plink/2.00-20231024-avx2
 ###### CHECK SEX:
 # keep sex chromosomes
 plink2 --vcf VQSR_Pass_vcf.gz \
@@ -272,6 +281,8 @@ rm missingSNPIDs.txt
 awk '{print $1, $1, $2}' ${clinical_sexes} | sed 's/M/1/g' | sed 's/F/2/g' > sex_file.txt
 
 # update sexes and check:
+module load StdEnv/2020 plink/1.9b_6.21-x86_64
+
 plink --bfile Clean_cohort_sex_incl \
       --update-sex sex_file.txt \
       --check-sex 0.4 0.6 \
@@ -318,7 +329,7 @@ grep -v -f discordant_sex.txt penultimate_passing_samples.txt > Final_list_of_pa
 final_num=$(wc -l Final_list_of_passing_samples.txt | awk '{print $1}')
 echo "Samples with Matching Sex:" $final_num >> Sample_QC_Passing_by_Step.txt
 
-# list of samples which pass QC: /project/6007512/shared/C3G/projects/Miranda_Summer/test_pipeline/post_gvcf_pipeline/Samples_passing_QC.list
+# list of samples which pass QC: Samples_passing_QC.list
 sed '1d' Final_list_of_passing_samples.txt > passing_samples.txt
 
 # filter:
@@ -338,7 +349,6 @@ echo "QC Step, Cut-off to Survive, Number of Remaining Samples" > temp
 sed 's/Chimeric Pass: /Chimeric Reads, < 5%,/g' Sample_QC_Passing_by_Step.txt | sed 's/Contamination Pass: /Contamination, < 5%,/g' | sed 's/Missingness Pass: /Missingness, < Mean + 3 × SD,/g' | sed 's/Depth Pass: /Mean Depth, > Mean − 3 × SD,/g' | sed 's/Quality Pass: /Mean Quality, > Mean − 3 × SD,/g' | sed 's/Unrelated Samples: /Relatedness, Must have no relationship closer than 2nd degree,/g' | sed 's/Samples with Matching Sex: /Sex Check, Must not have sex mismatch,/g' > sqc.txt
 cat temp sqc.txt | awk '!x[$0]++' > Sample_QC_Passing_by_Step.txt 
 
-rm ${genpipes_dir}/all_hg${genome_build}.ref
 
 #### Move files to the output directory:
 cp Ancestry_PCA_plot.png ${output_dir}
