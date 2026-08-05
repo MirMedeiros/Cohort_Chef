@@ -8,14 +8,15 @@
 ################# SET UP VARIABLES #################
 
 genpipes_dir=$1
+output_dir=$2
 genome_build=$3
+P_DIR=$(echo "$PWD" | sed 's|/[^/]*$||')
+script_dir=$PWD
 genome_ref=/cvmfs/soft.mugqic/CentOS6/genomes/species/Homo_sapiens.GRCh${genome_build}/genome/Homo_sapiens.GRCh${genome_build}.fa
 jointcalled_vcf=${genpipes_dir}/variants/allSamples.hc.vqsr.vt.mil.snpId.snpeff.dbnsfp.vcf.gz
-output_dir=$2
-P_DIR=$(echo "$PWD" | sed 's|/[^/]*$||')
 ref1KGPLINK=${P_DIR}/lib/1KG_hg${genome_build}_maf_hwe_geno
 cp ${P_DIR}/lib/all_hg${genome_build}.ref ${genpipes_dir}
-script_dir=$PWD
+
 
 # make outdir and navigate to it:
 mkdir ${genpipes_dir}/Sample_QC
@@ -128,11 +129,12 @@ rm VCF_PLINK*
 rm missingSNPID.txt
 rm VarsRenamed*
 
-#create a blank prune.out file incase cohort is too small to prune:
-touch Clean_VarsRenamed_pruning.prune.out
+# Setup Fail Safe for if cohort is smaller than 30 samples to still run LD pruning:
+# This will proceed with a sloppy higher noise pruning of the smaller cohort but be adaquet enough to look for general large differences between samples
+SMALL_LD_FLAG=$( [ $(wc -l < Clean_VarsRenamed.fam) -lt 30 ] && echo "--bad-ld" )
 
 plink2 --bfile Clean_VarsRenamed \
---indep-pairwise 50 5 0.5 \
+--indep-pairwise 50 5 0.5 ${SMALL_LD_FLAG} \
 --memory 55000 \
 --out Clean_VarsRenamed_pruning
 
@@ -148,7 +150,7 @@ rm Clean_VarsRenamed_pruning*
 echo "Cohort PLINK Files Generated" SampleQC_progress.txt >> SampleQC_progress.txt
 
 # run PCA:
-plink \
+plink2 \
 --bfile Pruned_PLINK \
 --pca 10 \
 --out sample
@@ -196,6 +198,8 @@ plink2 --bfile ${ref1KGPLINK} \
 
 
 # merge and QC together:
+module load StdEnv/2020 plink/1.9b_6.21-x86_64
+
 plink \
 --bfile overlapping_SNPs_samples  \
 --bmerge overlapping_SNPs_ref \
@@ -209,6 +213,8 @@ rm sample_SNPs.txt
 rm ref_SNPs.txt
 
 # Prune Merged file:
+module load StdEnv/2023 plink/2.00-20231024-avx2
+
 plink2 --bfile merged_samples_ref \
 --indep-pairwise 50 5 0.5 \
 --memory 55000 \
@@ -224,7 +230,7 @@ plink2 --bfile merged_samples_ref \
 rm samples_pruning*
 
 # run PCA:
-plink \
+plink2 \
 --bfile pruned_merged \
 --pca 10 \
 --out PCA_ancestry
