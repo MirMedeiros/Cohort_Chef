@@ -308,7 +308,7 @@ Rscript ${script_dir}/SampleQC.R "${genpipes_dir}"
 echo "Identified Problematic Samples" SampleQC_progress.txt >> SampleQC_progress.txt
 
 # Go into R and plot ancestries and cohort PCAs:
-Rscript ${script_dir}/Ancestry_Plotting.R "${genpipes_dir}"
+Rscript ${script_dir}/Ancestry_Plotting.R "${genpipes_dir}" "${genome_build}"
 
 
 # Update Progress
