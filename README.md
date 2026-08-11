@@ -1,20 +1,8 @@
 ![alt text](https://github.com/MirMedeiros/Cohort_Chef/blob/main/lib/CohortChef_Infographic.png "Your Cookbook") 
 
+## Cohort Chef 🧑‍🍳 
 This pipeline takes in a joint called vcf from GenPipes v.6.1.0 and provides additional sample level and variant level quality control. A full html report is then written describing the cohort quality control.
 
-```text
-  --------------------                    .----.
-   ___      _                _           (      )
- / ___|___ | |__   ___  _ __| |_         |`----'|
-| |   / _ \|  _ \ / _ \| '__| __|        || | | |         ___________________________
-| |__| (_) | | | | (_) | |  | |_       .-'-'-'-'- .      /         Alright.          \
- \____\___/|_| |_|\___/|_|   \__|     /            \   <    Let's get this cohort     |
-  / ___| |__   ___ / _|              |   . ＾▽＾ .   |    \         cooking!          /
- | |   |  _ \ / _ \ |_                \            /       -------------------------
- | |___| | | |  __/  _|                '-.______.-'
-  \____|_| |_|\___|_|                   /   \/   \
-                                       /    /\    \
-```
 
 ## Requirements:
 This pipeline is designed to run on Digital Research Alliance of Canada (DRAC) hosted servers and work on the output of GenPipes v.6.1.0. As such you must ensure that your environment is configured as per the requirements of GenPipes v.6.1.0 described here: https://genpipes.readthedocs.io/en/genpipes-v6.1.0/deploy/access_gp_pre_installed.html
