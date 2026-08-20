@@ -37,7 +37,7 @@ module unload ngstools/1.0.1 StdEnv/2023 gcc/12.3
 module load StdEnv/2023
 module load gatk/4.6.1.0
 module load python/3.13.2 
-
+module load StdEnv/2023  gcc/12.3 bcftools/1.22
 
 bcftools view \
   -T ^${BL}  \
@@ -150,6 +150,7 @@ gatk SelectVariants \
  --java-options "-Xmx7g"  --exclude-filtered  --exclude-non-variants
 
 ###############################################################
+module load StdEnv/2023  gcc/12.3 bcftools/1.22
 
 # set list of files to counts
 list_files=(blacklist_filtered_VQSR.vcf.gz varQC_Post_sampleQC_GQ20_filtered.vcf.gz varQC_Post_sampleQC_GQ20_DP${DP}_filtered.vcf.gz varQC_Post_sampleQC_GQ20_DP${DP}_MISS_filtered.vcf.gz varQC_Post_sampleQC_MISS_HWE10e5_PASSED.vcf.gz varQC_Post_sampleQC_MISS_HWE10e5_PASSED_AB_filtered.vcf.gz)
@@ -190,7 +191,7 @@ mv variant_counts_next.csv ${output_dir}
 ##################################################################
 #
 ## REPEAT EVERYTHING FOR THE NO SAMPLES REMOVED FILE ###
-#
+module load StdEnv/2023  gcc/12.3 bcftools/1.22
 
 ### VCF name (where no samples were removed):
 VCF=${genpipes_dir}/Sample_QC/VQSR_Pass_vcf.gz
@@ -319,6 +320,7 @@ gatk SelectVariants \
  --java-options "-Xmx7g"  --exclude-filtered  --exclude-non-variants
 
 ###############################################################
+module load StdEnv/2023  gcc/12.3 bcftools/1.22
 
 # set list of files to counts
 list_files=(blacklist_filtered_VQSR.vcf.gz varQC_Post_sampleQC_GQ20_filtered.vcf.gz varQC_Post_sampleQC_GQ20_DP${DP}_filtered.vcf.gz varQC_Post_sampleQC_GQ20_DP${DP}_MISS_filtered.vcf.gz varQC_Post_sampleQC_MISS_HWE10e5_PASSED.vcf.gz varQC_Post_sampleQC_MISS_HWE10e5_PASSED_AB_filtered.vcf.gz)
