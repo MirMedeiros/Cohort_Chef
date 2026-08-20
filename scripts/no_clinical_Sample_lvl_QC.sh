@@ -272,6 +272,8 @@ cp penultimate_passing_samples.txt Final_list_of_passing_samples.txt
 sed '1d' Final_list_of_passing_samples.txt > passing_samples.txt
 
 # filter:
+module load StdEnv/2023  gcc/12.3 bcftools/1.22
+
 bcftools view -S passing_samples.txt \
 VQSR_Pass_vcf.gz \
  -o Post_Sample_QC_Post_VQSR.vcf.gz -O z
