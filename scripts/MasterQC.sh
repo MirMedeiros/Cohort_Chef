@@ -158,6 +158,7 @@ echo "Submitted Variant QC (Job ID: $JOB2_ID) - Waiting for Job $JOB1_ID to fini
 
 ## Prepare for Markdown file:
 cp ${P_DIR}/lib/Build_Report.Rmd custom_report.Rmd
+cp ${P_DIR}/lib/all_hg37.ref  ${output_dir}/all_hg.ref
 
 cp ${P_DIR}/lib/report_header.png  ${output_dir}
 cp ${P_DIR}/lib/Seq_pipeline_diagram.png ${output_dir}
