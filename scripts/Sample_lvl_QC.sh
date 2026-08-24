@@ -151,11 +151,29 @@ rm Clean_VarsRenamed_pruning*
 # Update Progress
 echo "Cohort PLINK Files Generated" SampleQC_progress.txt >> SampleQC_progress.txt
 
-# run PCA:
-plink2 \
---bfile Pruned_PLINK \
---pca 10 \
---out sample
+## CONDITIONAL PCA FOR SMALL SAMPLES (n < 30)
+# Count the number of lines (samples) in the .fam file
+N_SAMPLES=$(wc -l < Clean_VarsRenamed.fam)
+echo "Detected $N_SAMPLES samples."
+
+if [ "$N_SAMPLES" -lt 30 ]; then
+    echo "Sample size is less than 30. Generating frequency file for PCA..."
+    
+    # Step 1: Calculate allele frequencies
+    plink2 --bfile Pruned_PLINK --freq --out my_freqs
+    
+    # Step 2: Run PCA using the generated frequencies
+    MAX_PCS=10
+    N_PCS=$(( $N_SAMPLES - 1 < $MAX_PCS ? $N_SAMPLES - 1 : $MAX_PCS ))
+    plink2 --bfile Pruned_PLINK --read-freq my_freqs.afreq --pca ${N_PCS} --out sample
+
+else
+    echo "Sample size is 30 or greater. Running standard PCA..."
+    
+    # Run standard PCA directly
+    plink2 --bfile Pruned_PLINK --pca 10 --out sample
+
+fi
 
 # Update Progress
 echo "Sample PCA Calculated" SampleQC_progress.txt >> SampleQC_progress.txt
