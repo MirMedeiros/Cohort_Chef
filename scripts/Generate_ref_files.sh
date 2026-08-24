@@ -49,14 +49,15 @@ sbatch --account=$RAP_ID PLINK_commands_1KG.sh
 ####         GRCh38          ####
 #################################
 
-wget -L "http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg38-human/hg38.blacklist.bed.gz" -O hg38-blacklist.bed
-
+wget -L "http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg38-human/hg38.blacklist.bed.gz" -O hg38-blacklist.bed.gz
+gunzip hg38-blacklist.bed.gz
 
 #################################
 ####         GRCh37          ####
 #################################
 
-wget -L "https://www.encodeproject.org/files/ENCFF001TDO/@@download/ENCFF001TDO.bed.gz" -O hg37-blacklist.bed
+wget -L "https://www.encodeproject.org/files/ENCFF001TDO/@@download/ENCFF001TDO.bed.gz" -O hg37-blacklist.bed.gz
+gunzip hg37-blacklist.bed.gz
 
 mv *blacklist.bed ../lib
 mv all_hg*.ref ../lib
