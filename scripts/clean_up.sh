@@ -33,3 +33,4 @@ mv ${output_dir}/*.list ${output_dir}/support_files
 mv ${output_dir}/cleaned_fullQC.vcf.gz.err ${output_dir}/support_files
 mv ${output_dir}/cleaned_fullQC.vcf.gz.log ${output_dir}/support_files
 rm ${output_dir}/full_QC_VCFs/cleaned_fullQC.vcf.gz
+rm ${output_dir}/all_hg.ref
