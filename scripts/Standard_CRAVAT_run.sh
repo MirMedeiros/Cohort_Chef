@@ -20,6 +20,8 @@ source oc_env/bin/activate
 cd ${out_dir}
 
 # CLEAN VCF:
+module load StdEnv/2023  gcc/12.3 bcftools/1.22
+
 bcftools annotate -x ^FORMAT/AD,^FORMAT/DP,^FORMAT/FT,^FORMAT/GQ,^FORMAT/GT,^FORMAT/MIN_DP,^FORMAT/PGT,^FORMAT/PID,^FORMAT/PL,^FORMAT/PS,^FORMAT/RGQ,^FORMAT/SB,^INFO/AC,^INFO/AF,^INFO/AN,^INFO/ANN,^INFO/BaseQRankSum,^INFO/DP,^INFO/END,^INFO/ExcessHet,^INFO/FS,^INFO/InbreedingCoeff,^INFO/MLEAC,^INFO/MLEAF,^INFO/MQ,^INFO/MQRankSum,^INFO/QD,^INFO/RAW_MQandDP,^INFO/ReadPosRankSum,^INFO/SOR FullCohort_FullQC.vcf.gz  -O z -o cleaned_fullQC.vcf.gz
 
 # run
