@@ -372,3 +372,10 @@ datatable(
   caption = "Table 5: Variants Surviving by Quality Control Step - No Samples Removed"
 )
 ```
+
+# OpenCravat Annotations
+Your variants have been annotated with different annotators through OpenCravat. You will receive your login information seperately. A description of all the annotators used are provided in the table below:
+
+```{r annos, echo = FALSE}
+knitr::include_graphics("<OUT_PATH>/OC_annotations.png")
+```
