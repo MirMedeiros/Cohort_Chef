@@ -162,6 +162,7 @@ cp ${P_DIR}/lib/all_hg37.ref  ${output_dir}/all_hg.ref
 
 cp ${P_DIR}/lib/report_header.png  ${output_dir}
 cp ${P_DIR}/lib/Seq_pipeline_diagram.png ${output_dir}
+cp ${P_DIR}/lib/OC_annotations.png ${output_dir}
 
 # modify to have the custom path:
 sed -i "s,<OUT_PATH>,${output_dir},g" custom_report.Rmd
